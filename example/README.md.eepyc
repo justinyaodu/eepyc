@@ -13,13 +13,18 @@ def read_path(path):
     with open(repo_root / path) as opened:
         return opened.read()
 
+repo_url_prefix = "https://github.com/justinyaodu/eepyc/tree/master/"
+
+def repo_url(path):
+    return repo_url_prefix + path
+
 def print_path(path):
-    print(f"[{path}]({path})")
+    print(f"[{path}]({repo_url(path)})")
 --}}
 
 # eepyc
 
-***E***valuate ***e***mbedded ***Py***thon ***c***ode in textual data, replacing code snippets with their output. Useful for templating and producing automatically generated content.
+*E*valuate *e*mbedded *Py*thon *c*ode in textual data, replacing code snippets with their output. Useful for templating and producing automatically generated content.
 
 {{%
 # This string contains double braces, which cannot be directly enclosed
@@ -31,7 +36,7 @@ expression_example = ('An RGB triplet can have {'
 --}}
 
 ```console
-$ echo '{{ expression_example }}' | python eepyc.py
+$ echo '{{ expression_example }}' | eepyc
 {{%
 e = eepyc.Evaluator()
 print(e.eval_tags(expression_example))
@@ -47,6 +52,20 @@ $
 * **Simple import system** for handling multiple files
 * **Reuse existing Python code** with minimal modifications
 * **Whitespace control** for pretty source files and pretty output
+
+## Installation
+
+Install from [PyPI](https://pypi.org/project/eepyc):
+
+```console
+$ pip install eepyc
+```
+
+Alternatively, [download]({{ repo_url('eepyc.py') }}) the script and run it directly:
+
+```console
+$ python eepyc.py
+```
 
 ## Examples
 
@@ -67,7 +86,7 @@ print(mult_table_src)
 Result:
 
 ```console
-$ python eepyc.py {{ mult_table_path }}
+$ eepyc {{ mult_table_path }}
 {{%
 e = eepyc.Evaluator()
 print(e.eval_tags(mult_table_src))
@@ -100,7 +119,7 @@ print(" (file extension is not important)")
 Result:
 
 ```console
-$ python eepyc.py {{ color_path }} {{ color_test_path }}
+$ eepyc {{ color_path }} {{ color_test_path }}
 {{%
 e = eepyc.Evaluator()
 e.eval_tags(color_src)
@@ -115,7 +134,7 @@ This readme file was generated with `eepyc`, by making it evaluate its own sourc
 
 ## Command-Line Usage
 
-From `python eepyc.py --help`:
+From `eepyc --help`:
 
 ```
 {{% print(eepyc.help__) }}
