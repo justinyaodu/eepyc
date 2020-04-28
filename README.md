@@ -1,6 +1,6 @@
 # eepyc
 
-***E***valuate ***e***mbedded ***Py***thon ***c***ode in textual data, replacing code snippets with their output. Useful for templating and producing automatically generated content.
+*E*valuate *e*mbedded *Py*thon *c*ode in textual data, replacing code snippets with their output. Useful for templating and producing automatically generated content.
 
 ```console
 $ echo 'An RGB triplet can have {{ 2 ** 24 }} possible values.' | python eepyc.py
