@@ -1,6 +1,12 @@
 # eepyc
 
-***E***valuate ***e***mbedded ***Py***thon ***c***ode in text files, replacing code snippets with their output. Useful for templating and producing automatically generated content.
+***E***valuate ***e***mbedded ***Py***thon ***c***ode in textual data, replacing code snippets with their output. Useful for templating and producing automatically generated content.
+
+```console
+$ echo 'An RGB triplet can have {{ 2 ** 24 }} possible values.' | python eepyc.py
+An RGB triplet can have 16777216 possible values.
+$
+```
 
 ## Features
 
@@ -12,14 +18,6 @@
 * **Whitespace control** for pretty source files and pretty output
 
 ## Examples
-
-### Evaluating Expressions
-
-```console
-$ echo 'An RGB triplet can have {{ 2 ** 24 }} possible values.' | python eepyc.py
-An RGB triplet can have 16777216 possible values.
-$
-```
 
 ### Executing Statements
 
@@ -153,7 +151,7 @@ eepyc's Python interface instead.
 
 ## Security Note
 
-`eepyc` should not be used with untrusted input, since the Python code embedded in the input has full access to the Python interpreter.
+`eepyc` should not be used with untrusted input, since the Python code embedded in the input has full access to the capabilities of the Python interpreter.
 
 ## Syntax Reference
 

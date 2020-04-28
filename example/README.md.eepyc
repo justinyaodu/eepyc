@@ -19,20 +19,7 @@ def print_path(path):
 
 # eepyc
 
-***E***valuate ***e***mbedded ***Py***thon ***c***ode in text files, replacing code snippets with their output. Useful for templating and producing automatically generated content.
-
-## Features
-
-* **Straightforward syntax** inspired by Liquid, Django, and others
-* **Full access to Python's capabilities:** import modules, define functions and classes, etc.
-* **Multi-line tags** improve readability and flexibility
-* **Simple import system** for handling multiple files
-* **Reuse existing Python code** with minimal modifications
-* **Whitespace control** for pretty source files and pretty output
-
-## Examples
-
-### Evaluating Expressions
+***E***valuate ***e***mbedded ***Py***thon ***c***ode in textual data, replacing code snippets with their output. Useful for templating and producing automatically generated content.
 
 {{%
 # This string contains double braces, which cannot be directly enclosed
@@ -51,6 +38,17 @@ print(e.eval_tags(expression_example))
 }}
 $
 ```
+
+## Features
+
+* **Straightforward syntax** inspired by Liquid, Django, and others
+* **Full access to Python's capabilities:** import modules, define functions and classes, etc.
+* **Multi-line tags** improve readability and flexibility
+* **Simple import system** for handling multiple files
+* **Reuse existing Python code** with minimal modifications
+* **Whitespace control** for pretty source files and pretty output
+
+## Examples
 
 ### Executing Statements
 
@@ -125,7 +123,7 @@ From `python eepyc.py --help`:
 
 ## Security Note
 
-`eepyc` should not be used with untrusted input, since the Python code embedded in the input has full access to the Python interpreter.
+`eepyc` should not be used with untrusted input, since the Python code embedded in the input has full access to the capabilities of the Python interpreter.
 
 ## Syntax Reference
 
