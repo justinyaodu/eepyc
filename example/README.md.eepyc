@@ -15,9 +15,6 @@ def read_path(path):
 
 def print_path(path):
     print(f"[{path}]({path})")
-
-def repo_url(path):
-    return "https://github.com/justinyaodu/eepyc/tree/master/" + path
 --}}
 
 # eepyc
