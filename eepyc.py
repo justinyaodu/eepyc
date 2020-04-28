@@ -153,8 +153,8 @@ class Evaluator:
 
 
 help__ = f"""Usage:
-    python eepyc.py [file...]
-    python eepyc.py <option>
+    eepyc [file...]
+    eepyc <option>
 
 Options:
     -h, --help  Display this help message
