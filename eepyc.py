@@ -172,7 +172,11 @@ Copyright (C) 2020 {__author__}
 Licensed under the MIT License."""
 
 
-if __name__ == '__main__':
+# Close the eepyc statement tag opened at the beginning of the file.
+# }}
+
+
+def _main():
     # Check for help or version options.
     if len(sys.argv) == 2:
         if sys.argv[1] in ['-h', '--help']:
@@ -195,5 +199,6 @@ if __name__ == '__main__':
         evaluator.eval_tags(f.read())
     print(evaluator.eval_tags(files[-1].read()), end='')
 
-# Close the eepyc statement tag opened at the beginning of the file.
-# }}
+
+if __name__ == '__main__':
+    _main()
