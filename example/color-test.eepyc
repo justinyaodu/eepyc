@@ -1,0 +1,22 @@
+{{#
+This is a comment tag. The hyphens at the end of this tag delete the
+newline characters that come after this tag (two hyphens for two
+newlines) to keep the output formatted nicely.
+--}}
+
+{{#
+The tag below imports the namespace exported by color.py, and gives it
+the alias 'c' to keep things concise.
+--}}
+
+{{i color as c --}}
+
+{{%
+# Define some RGB color tuples.
+red   = (255, 0, 0)
+green = (0, 255, 0)
+--}}
+
+{{# Call the imported functions. -}}
+I'm mixing {{ c.format_hex(red) }} and {{ c.format_hex(green) }}.
+I got {{ c.format_hex(c.average(red, green)) }}.

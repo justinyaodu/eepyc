@@ -1,0 +1,16 @@
+Here is a multiplication table:
+
+{{%
+# This is the inside of a statement tag, specified with '%'.
+
+# Define a variable.
+size = 9
+
+# Use list comprehensions to create a multiplication table.
+table = [[(i + 1) * (j + 1) for i in range(size)] for j in range(size)]
+
+# Print the multiplication table. When evaluated, this statement tag
+# will be replaced by the output of the print() calls in the tag.
+for row in table:
+    print(''.join([f"{v:3}" for v in row]))
+}}
