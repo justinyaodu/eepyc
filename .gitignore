@@ -3,3 +3,8 @@ __pycache__/
 
 # Vim swap files (assuming there aren't more than 16 at a time).
 .*.sw[a-p]
+
+# Build files.
+build/
+dist/
+*.egg-info/
