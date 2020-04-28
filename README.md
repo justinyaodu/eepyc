@@ -3,7 +3,7 @@
 *E*valuate *e*mbedded *Py*thon *c*ode in textual data, replacing code snippets with their output. Useful for templating and producing automatically generated content.
 
 ```console
-$ echo 'An RGB triplet can have {{ 2 ** 24 }} possible values.' | python eepyc.py
+$ echo 'An RGB triplet can have {{ 2 ** 24 }} possible values.' | eepyc
 An RGB triplet can have 16777216 possible values.
 $
 ```
@@ -17,11 +17,25 @@ $
 * **Reuse existing Python code** with minimal modifications
 * **Whitespace control** for pretty source files and pretty output
 
+## Installation
+
+Install from [PyPI](https://pypi.org/project/eepyc):
+
+```console
+$ pip install eepyc
+```
+
+Alternatively, [download](https://github.com/justinyaodu/eepyc/tree/master/eepyc.py) the script and run it directly:
+
+```console
+$ python eepyc.py
+```
+
 ## Examples
 
 ### Executing Statements
 
-[example/mult-table.eepyc](example/mult-table.eepyc)
+[example/mult-table.eepyc](https://github.com/justinyaodu/eepyc/tree/master/example/mult-table.eepyc)
 
 ```
 Here is a multiplication table:
@@ -45,7 +59,7 @@ for row in table:
 Result:
 
 ```console
-$ python eepyc.py example/mult-table.eepyc
+$ eepyc example/mult-table.eepyc
 Here is a multiplication table:
 
   1  2  3  4  5  6  7  8  9
@@ -62,7 +76,7 @@ $
 
 ### Importing and Exporting Namespaces
 
-[example/color.py](example/color.py)
+[example/color.py](https://github.com/justinyaodu/eepyc/tree/master/example/color.py)
 
 ```python
 # Tags and tag delimiters can be placed in Python comments
@@ -88,7 +102,7 @@ def average(a, b):
 # End of statement tag.
 # }}
 ```
-[example/color-test.eepyc](example/color-test.eepyc)
+[example/color-test.eepyc](https://github.com/justinyaodu/eepyc/tree/master/example/color-test.eepyc)
  (file extension is not important)
 
 ```
@@ -119,7 +133,7 @@ I got {{ c.format_hex(c.average(red, green)) }}.
 Result:
 
 ```console
-$ python eepyc.py example/color.py example/color-test.eepyc
+$ eepyc example/color.py example/color-test.eepyc
 I'm mixing #ff0000 and #00ff00.
 I got #7f7f00.
 $
@@ -131,7 +145,7 @@ This readme file was generated with `eepyc`, by making it evaluate its own sourc
 
 ## Command-Line Usage
 
-From `python eepyc.py --help`:
+From `eepyc --help`:
 
 ```
 Usage:
