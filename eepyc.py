@@ -6,7 +6,7 @@
 # {{%
 
 __all__ = ['Evaluator']
-__version__ = "0.1"
+__version__ = "0.1.1"
 __author__ = "Justin Yao Du"
 
 import io
