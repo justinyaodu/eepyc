@@ -6,7 +6,7 @@
 # {{%
 
 __all__ = ['Evaluator']
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 __author__ = "Justin Yao Du"
 
 import io
@@ -121,7 +121,12 @@ class Evaluator:
         # Get tag output.
         tag_type = groups['tag_type']
         tag_text = groups['tag_text']
-        evaluated = self._eval_tag(tag_type, tag_text, namespace)
+
+        try:
+            evaluated = self._eval_tag(tag_type, tag_text, namespace)
+        except Exception as e:
+            msg = f"Error occurred while evaluating tag:\n{match.group(0)}"
+            raise ValueError(msg) from e
 
         # Trim up to the number of newlines specified by the hyphens.
         trim_before = len(groups['trim_before'])
