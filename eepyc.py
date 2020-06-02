@@ -37,8 +37,10 @@ class Evaluator:
     ])
 
     import_regex = ''.join([
-        r'^(?P<name>\S+)',            # Name of namespace to import.
-        r'(\s+as\s+(?P<alias>\S+))?$' # Optional alias (import as).
+        r'\s*',                       # Whitespace before.
+        r'(?P<name>\S+)',             # Name of namespace to import.
+        r'(\s+as\s+(?P<alias>\S+))?', # Optional alias (import as).
+        r'\s*'                        # Whitespace after.
     ])
 
     export_regex = r'^(?P<name>\S+)$' # Name to export namespace under.
@@ -87,20 +89,26 @@ class Evaluator:
 
         elif tag_type == 'i':
             # Import namespace.
-            
-            match = re.match(__class__.import_regex, tag_text)
-            if match is None:
-                raise ValueError("Invalid syntax for import tag.")
 
-            name = match.group('name')
-            alias = match.group('alias') or name
+            for import_expr in tag_text.split(','):
+                # Ignore empty and whitespace-only strings.
+                if re.fullmatch(r'\s*', import_expr):
+                    continue
 
-            try:
-                # Import requested namespace into current namespace.
-                namespace[alias] = _DictWrapper(self.namespaces[name])
-            except KeyError as e:
-                msg = f"The namespace '{name}' is not defined."
-                raise NameError(msg) from e
+                match = re.match(__class__.import_regex, import_expr)
+                if match is None:
+                    raise ValueError("Invalid syntax for import tag.")
+
+                name = match.group('name')
+                alias = match.group('alias') or name
+
+                try:
+                    # Import requested namespace into current namespace.
+                    namespace[alias] = _DictWrapper(self.namespaces[name])
+                except KeyError as e:
+                    msg = f"The namespace '{name}' is not defined."
+                    raise NameError(msg) from e
+
             return ''
         
         elif tag_type == '#':
