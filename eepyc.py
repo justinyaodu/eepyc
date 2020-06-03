@@ -27,9 +27,9 @@ class Evaluator:
     tag_outer_regex = ''.join([
         r'((?P<newlines_before>\n+)', # Newlines before.
         r'(?P<tag_indent>\s*))?',     # Whitespace used to indent this tag.
-        re.escape('{{'),              # Opening tag delimiter.
+        r'\{\{',                      # Opening tag delimiter.
         r'(?P<tag_inner>.*?)',        # Text enclosed in tag delimiters.
-        re.escape('}}'),              # Closing tag delimiter.
+        r'\}\}',                      # Closing tag delimiter.
         r'(?P<newlines_after>\n*)',   # Newlines after.
     ])
 
