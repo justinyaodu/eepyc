@@ -3,23 +3,23 @@ inputs and put the output into this file. How excitingly meta. -}}
 {{i eepyc --}}
 
 {{%
-import sys
-from pathlib import Path
-
-# Used later for loading the example files.
-repo_root = Path(sys.path[0])
-
-def read_path(path):
-    with open(repo_root / path) as opened:
-        return opened.read()
-
-repo_url_prefix = "https://github.com/justinyaodu/eepyc/tree/master/"
-
-def repo_url(path):
-    return repo_url_prefix + path
-
-def print_path(path):
-    print(f"[{path}]({repo_url(path)})")
+    import sys
+    from pathlib import Path
+    
+    # Used later for loading the example files.
+    repo_root = Path(sys.path[0])
+    
+    def read_path(path):
+        with open(repo_root / path) as opened:
+            return opened.read()
+    
+    repo_url_prefix = "https://github.com/justinyaodu/eepyc/tree/master/"
+    
+    def repo_url(path):
+        return repo_url_prefix + path
+    
+    def print_path(path):
+        print(f"[{path}]({repo_url(path)})")
 --}}
 
 # eepyc
@@ -27,19 +27,19 @@ def print_path(path):
 *E*valuate *e*mbedded *Py*thon *c*ode in textual data, replacing code snippets with their output. Useful for templating and producing automatically generated content.
 
 {{%
-# This string contains double braces, which cannot be directly enclosed
-# in a tag. Instead, string concatenation is used to safely construct
-# the string.
-expression_example = ('An RGB triplet can have {'
-    + '{ 2 ** 24 }'
-    + '} possible values.')
+    # This string contains double braces, which cannot be directly
+    # enclosed in a tag. Instead, string concatenation is used to
+    # safely construct the string.
+    expression_example = ('An RGB triplet can have {'
+        + '{ 2 ** 24 }'
+        + '} possible values.')
 --}}
 
 ```console
 $ echo '{{ expression_example }}' | eepyc
 {{%
-e = eepyc.Evaluator()
-print(e.eval_tags(expression_example))
+    e = eepyc.Evaluator()
+    print(e.eval_tags(expression_example))
 }}
 $
 ```
@@ -72,14 +72,14 @@ $ python eepyc.py
 ### Executing Statements
 
 {{%
-mult_table_path = 'example/mult-table.eepyc'
-mult_table_src = read_path(mult_table_path)
-print_path(mult_table_path)
+    mult_table_path = 'example/mult-table.eepyc'
+    mult_table_src = read_path(mult_table_path)
+    print_path(mult_table_path)
 }}
 
 ```
 {{%
-print(mult_table_src)
+    print(mult_table_src)
 }}
 ```
 
@@ -88,8 +88,8 @@ Result:
 ```console
 $ eepyc {{ mult_table_path }}
 {{%
-e = eepyc.Evaluator()
-print(e.eval_tags(mult_table_src))
+    e = eepyc.Evaluator()
+    print(e.eval_tags(mult_table_src))
 }}
 $
 ```
@@ -97,19 +97,19 @@ $
 ### Importing and Exporting Namespaces
 
 {{%
-color_path = 'example/color.py'
-color_src = read_path(color_path)
-print_path(color_path)
+    color_path = 'example/color.py'
+    color_src = read_path(color_path)
+    print_path(color_path)
 }}
 
 ```python
 {{% print(color_src) }}
 ```
 {{%
-color_test_path = 'example/color-test.eepyc'
-color_test_src = read_path(color_test_path)
-print_path(color_test_path)
-print(" (file extension is not important)")
+    color_test_path = 'example/color-test.eepyc'
+    color_test_src = read_path(color_test_path)
+    print_path(color_test_path)
+    print(" (file extension is not important)")
 }}
 
 ```
@@ -121,9 +121,9 @@ Result:
 ```console
 $ eepyc {{ color_path }} {{ color_test_path }}
 {{%
-e = eepyc.Evaluator()
-e.eval_tags(color_src)
-print(e.eval_tags(color_test_src))
+    e = eepyc.Evaluator()
+    e.eval_tags(color_src)
+    print(e.eval_tags(color_test_src))
 }}
 $
 ```

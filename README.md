@@ -41,18 +41,18 @@ $ python eepyc.py
 Here is a multiplication table:
 
 {{%
-# This is the inside of a statement tag, specified with '%'.
+    # This is the inside of a statement tag, specified with '%'.
 
-# Define a variable.
-size = 9
+    # Define a variable.
+    size = 9
 
-# Use list comprehensions to create a multiplication table.
-table = [[(i + 1) * (j + 1) for i in range(size)] for j in range(size)]
+    # Use list comprehensions to create a multiplication table.
+    table = [[(i + 1) * (j + 1) for i in range(size)] for j in range(size)]
 
-# Print the multiplication table. When evaluated, this statement tag
-# will be replaced by the output of the print() calls in the tag.
-for row in table:
-    print(''.join([f"{v:3}" for v in row]))
+    # Print the multiplication table. When evaluated, this statement tag
+    # will be replaced by the output of the print() calls in the tag.
+    for row in table:
+        print(''.join([f"{v:3}" for v in row]))
 }}
 ```
 
@@ -106,23 +106,22 @@ def average(a, b):
  (file extension is not important)
 
 ```
-{{#
-This is a comment tag. The hyphens at the end of this tag delete the
+{{# This is a comment tag. The hyphens at the end of this tag delete the
 newline characters that come after this tag (two hyphens for two
-newlines) to keep the output formatted nicely.
---}}
+newlines) to keep the output formatted nicely. --}}
 
-{{#
-The tag below imports the namespace exported by color.py, and gives it
-the alias 'c' to keep things concise.
---}}
+{{# The tag below imports the namespace exported by color.py, and gives
+it the alias 'c' to keep things concise. --}}
 
 {{i color as c --}}
 
 {{%
-# Define some RGB color tuples.
-red   = (255, 0, 0)
-green = (0, 255, 0)
+    # Code in statement blocks can be indented for visual clarity.
+    # The extra indentation is removed with textwrap.dedent() before evaluation.
+
+    # Define some RGB color tuples.
+    red   = (255, 0, 0)
+    green = (0, 255, 0)
 --}}
 
 {{# Call the imported functions. -}}
@@ -149,8 +148,8 @@ From `eepyc --help`:
 
 ```
 Usage:
-    python eepyc.py [file...]
-    python eepyc.py <option>
+    eepyc [file...]
+    eepyc <option>
 
 Options:
     -h, --help  Display this help message
