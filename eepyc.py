@@ -66,7 +66,15 @@ class Evaluator:
 
         if tag_type == '':
             # Evaluate expression.
-            return str(eval(tag_text, namespace))
+            result = eval(tag_text, namespace)
+
+            # Special handling for lists: print each element on a new line.
+            if isinstance(result, str):
+                return result
+            elif isinstance(result, list):
+                return '\n'.join(str(v) for v in result)
+            else:
+                return str(result)
 
         elif tag_type == '%':
             # Execute statements.
