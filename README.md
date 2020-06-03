@@ -140,7 +140,7 @@ $
 
 ### Meta-Example
 
-This readme file was generated with `eepyc`, by making it evaluate its own source code before running itself on the files in the [example](example) folder. ([Dogfooding](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) is important.) The readme source is located [here](example/README.md.eepyc).
+This readme file was generated with `eepyc`, by making it evaluate its own source code before running itself on the files in the [example](https://github.com/justinyaodu/eepyc/tree/master/example) folder. ([Dogfooding](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) is important.) The readme source is located [here](https://github.com/justinyaodu/eepyc/tree/master/example/README.md.eepyc).
 
 ## Command-Line Usage
 
@@ -171,28 +171,27 @@ eepyc's Python interface instead.
 ### BNF Grammar
 
 ```
-<tagspec> ::= "" | "%" | "e" | "i" | "#"
-<hyphens> ::= "" | "-" <hyphens>
+<tagopen>  ::= "{{"
+<tagclose> ::= "}}"
 
-<import> ::= <identifier> | <identifier> " as " <identifier>
-<export> ::= <identifier>
+<linetrim>   ::= "" | "-" <linetrim>
+<bolflag>    ::= "" | "^"
+<whitespace> ::= " " | "\t" | "\n"
 
-<tagcontents> ::= <expression> | <statements> | <export> | <import> | <comment>
+<tagstart> ::= <linetrim> <bolflag> <whitespace>
+<tagend>   ::= <whitespace> <linetrim>
 
-<tag> ::= "{{" <tagspec> <hyphens> <whitespace> <tagcontents> <whitespace> <hyphens> "}}"
+<import>  ::= <identifier> | <identifier> " as " <identifier>
+<imports> ::= <import> | <import> ", " <imports>
+
+<expressiontag> ::= <tagopen>     <tagstart> <expression> <tagend> <tagclose>
+<statementtag>  ::= <tagopen> "%" <tagstart> <statements> <tagend> <tagclose>
+<importtag>     ::= <tagopen> "i" <tagstart> <imports>    <tagend> <tagclose>
+<exporttag>     ::= <tagopen> "e" <tagstart> <identifier> <tagend> <tagclose>
+<comment>       ::= <tagopen> "#" <tagstart> <comment>    <tagend> <tagclose>
 ```
 
 ### Additional Restrictions
-
-A tag's `tagspec` must correspond to `tagcontents` as follows:
-
-| `tagspec` | `tagcontents`  |
-|-----------|----------------|
-| `""`      | `<expression>` |
-| `"%"`     | `<statements>` |
-| `"e"`     | `<export>`     |
-| `"i"`     | `<import>`     |
-| `"#"`     | `<comment>`    |
 
 Tags must not contain the substring `}}` directly; workarounds include string concatenation and substring replacement. The text outside of tags must not contain `{{` or `}}`; a simple workaround is to use an expression tag like `{{ '{' * 2 }}`.
 
