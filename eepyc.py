@@ -35,8 +35,8 @@ class Evaluator:
 
     tag_inner_regex = ''.join([
         r'(?P<tag_type>[#%ie]?)', # Tag type specifier.
-        r'(?P<no_indent>[\^]?)',  # Caret to disable indenting of tag output.
         r'(?P<trim_before>-*)',   # Hyphens to trim newlines before.
+        r'(?P<no_indent>[\^]?)',  # Caret to disable indenting of tag output.
         r'\s',                    # Mandatory whitespace character.
         r'(?P<tag_text>.*?)',     # Tag contents.
         r'\s',                    # Mandatory whitespace character.
