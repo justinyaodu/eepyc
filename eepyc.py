@@ -98,7 +98,7 @@ class Evaluator:
         elif tag_type == 'e':
             # Export namespace.
 
-            match = re.match(__class__.export_regex, tag_text)
+            match = re.fullmatch(__class__.export_regex, tag_text)
             if match is None:
                 raise ValueError("Invalid syntax for export tag.")
 
@@ -115,7 +115,7 @@ class Evaluator:
                 if re.fullmatch(r'\s*', import_expr):
                     continue
 
-                match = re.match(__class__.import_regex, import_expr)
+                match = re.fullmatch(__class__.import_regex, import_expr)
                 if match is None:
                     raise ValueError("Invalid syntax for import tag.")
 
