@@ -6,12 +6,13 @@
 # {{%
 
 __all__ = ['Evaluator']
-__version__ = "0.1.2"
+__version__ = "0.2.0"
 __author__ = "Justin Yao Du"
 
 import io
 import re
 import sys
+import textwrap
 
 
 class _DictWrapper():
@@ -22,35 +23,45 @@ class _DictWrapper():
 
 class Evaluator:
     """Evaluates tags in text and manages exported namespaces."""
-    
-    tag_regex = ''.join([
-        r'(?P<newlines_before>\n*)', # Newlines before.
-        re.escape('{{'),             # Opening delimiter.
-        r'(?P<tag_type>[#%ie]?)',    # Tag type specifier.
-        r'(?P<trim_before>-*)',      # Hyphens to trim newlines before.
-        r'\s+',                      # Mandatory whitespace.
-        r'(?P<tag_text>.*?)',        # Tag contents.
-        r'\s+',                      # Mandatory whitespace.
-        r'(?P<trim_after>-*?)',      # Hyphens to trim newlines after.
-        re.escape('}}'),             # Closing delimiter.
-        r'(?P<newlines_after>\n*)'   # Newlines after.
+
+    tag_outer_regex = ''.join([
+        r'((?P<newlines_before>\n+)', # Newlines before.
+        r'(?P<tag_indent>\s*))?',     # Whitespace used to indent this tag.
+        re.escape('{{'),              # Opening tag delimiter.
+        r'(?P<tag_inner>.*?)',        # Text enclosed in tag delimiters.
+        re.escape('}}'),              # Closing tag delimiter.
+        r'(?P<newlines_after>\n*)',   # Newlines after.
+    ])
+
+    tag_inner_regex = ''.join([
+        r'(?P<tag_type>[#%ie]?)', # Tag type specifier.
+        r'(?P<no_indent>[\^]?)',  # Caret to disable indenting of tag output.
+        r'(?P<trim_before>-*)',   # Hyphens to trim newlines before.
+        r'\s',                    # Mandatory whitespace character.
+        r'(?P<tag_text>.*?)',     # Tag contents.
+        r'\s',                    # Mandatory whitespace character.
+        r'(?P<trim_after>-*)',    # Hyphens to trim newlines after.
     ])
 
     import_regex = ''.join([
         r'\s*',                       # Whitespace before.
         r'(?P<name>\S+)',             # Name of namespace to import.
         r'(\s+as\s+(?P<alias>\S+))?', # Optional alias (import as).
-        r'\s*'                        # Whitespace after.
+        r'\s*',                       # Whitespace after.
     ])
 
-    export_regex = r'^(?P<name>\S+)$' # Name to export namespace under.
+    export_regex = ''.join([
+        r'\s*',           # Whitespace before.
+        r'(?P<name>\S+)', # Name to export namespace under.
+        r'\s*',           # Whitespace after.
+    ])
 
     def __init__(self):
         # Map exported namespace names to namespaces, so they can be
         # imported later.
         self.namespaces = dict()
 
-    def _eval_tag(self, tag_type, tag_text, namespace):
+    def _eval_tag_text(self, tag_type, tag_text, namespace):
         """Evaluate a tag's contents in the given namespace."""
 
         if tag_type == '':
@@ -65,7 +76,8 @@ class Evaluator:
             fake_stdout = io.StringIO()
             sys.stdout = fake_stdout
 
-            exec(tag_text, namespace)
+            # Dedent code before executing, to properly handle indented code.
+            exec(textwrap.dedent(tag_text), namespace)
 
             # Restore the actual stdout.
             sys.stdout = actual_stdout
@@ -88,7 +100,7 @@ class Evaluator:
             return ''
 
         elif tag_type == 'i':
-            # Import namespace.
+            # Import namespaces.
 
             for import_expr in tag_text.split(','):
                 # Ignore empty and whitespace-only strings.
@@ -121,29 +133,54 @@ class Evaluator:
             # above.
             raise ValueError(f"Unknown tag type '{tag_type}'.")
 
-    def _sub_tag(self, match, namespace):
-        """Wrapper for ``_eval_tag`` which handles newline trimming."""
+    @staticmethod
+    def _trim_newlines(newlines, trim):
+        """Given a string of newlines, and another string whose length
+        indicates the number of newlines to trim, return a string with
+        the resulting number of newlines.
+        """
+        return newlines[len(trim):]
 
-        groups = match.groupdict(default='')
+    def _eval_tag_outer(self, match_outer, namespace):
+        """Wrapper for ``_eval_tag_text`` which handles newline
+        trimming and indenting.
+        """
+
+        groups_outer = match_outer.groupdict(default='')
+
+        # Match groups within the tag delimiters.
+        match_inner = re.fullmatch(__class__.tag_inner_regex,
+                groups_outer['tag_inner'], flags=re.DOTALL)
+        if not match_inner:
+            msg = "Invalid tag syntax in tag:\n"
+            msg += match_outer.group(0)
+            raise ValueError(msg)
+        groups_inner = match_inner.groupdict(default='')
 
         # Get tag output.
-        tag_type = groups['tag_type']
-        tag_text = groups['tag_text']
-
+        tag_type = groups_inner['tag_type']
+        tag_text = groups_inner['tag_text']
         try:
-            evaluated = self._eval_tag(tag_type, tag_text, namespace)
+            evaluated = self._eval_tag_text(tag_type, tag_text, namespace)
         except Exception as e:
-            msg = f"Error occurred while evaluating tag:\n{match.group(0)}"
+            msg = "Error occurred while evaluating tag:\n"
+            msg += match_outer.group(0)
             raise ValueError(msg) from e
 
-        # Trim up to the number of newlines specified by the hyphens.
-        trim_before = len(groups['trim_before'])
-        newlines_before = len(groups['newlines_before'])
-        newlines_before = '\n' * max(0, newlines_before - trim_before)
+        # Indent each line of output, unless indenting is turned off.
+        tag_indent = groups_outer['tag_indent']
+        if not groups_inner['no_indent']:
+            # Only indent non-empty lines.
+            evaluated = '\n'.join((tag_indent + s if s else "")
+                    for s in evaluated.split('\n'))
 
-        trim_after = len(groups['trim_after'])
-        newlines_after = len(groups['newlines_after'])
-        newlines_after = '\n' * max(0, newlines_after - trim_after)
+        # Trim up to the number of newlines specified by the hyphens.
+        newlines_before = __class__._trim_newlines(
+                groups_outer['newlines_before'],
+                groups_inner['trim_before'])
+        newlines_after = __class__._trim_newlines(
+                groups_outer['newlines_after'],
+                groups_inner['trim_after'])
 
         return newlines_before + evaluated + newlines_after
 
@@ -156,13 +193,13 @@ class Evaluator:
         # Global namespace used for eval() and exec() calls.
         namespace = dict()
 
-        def replace_func(match):
-            return self._sub_tag(match, namespace)
+        def repl_func(match):
+            return self._eval_tag_outer(match, namespace)
 
         # Match newlines in tag contents to allow multi-line tags.
         flags = re.DOTALL
 
-        return re.sub(__class__.tag_regex, replace_func, text, flags=flags)
+        return re.sub(__class__.tag_outer_regex, repl_func, text, flags=flags)
 
 
 help__ = f"""Usage:
