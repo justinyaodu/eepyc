@@ -69,9 +69,7 @@ class Evaluator:
             result = eval(tag_text, namespace)
 
             # Special handling for lists: print each element on a new line.
-            if isinstance(result, str):
-                return result
-            elif isinstance(result, list):
+            if isinstance(result, list):
                 return '\n'.join(str(v) for v in result)
             else:
                 return str(result)
