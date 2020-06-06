@@ -6,10 +6,11 @@
 # {{%
 
 __all__ = ['Evaluator']
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 __author__ = "Justin Yao Du"
 
 import io
+import itertools
 import re
 import sys
 import textwrap
@@ -64,14 +65,12 @@ class Evaluator:
     def _eval_tag_text(self, tag_type, tag_text, namespace):
         """Evaluate a tag's contents in the given namespace."""
 
-        if tag_type == '':
+        if tag_type == '': # TODO dedent expression tags too
             # Evaluate expression.
             result = eval(tag_text, namespace)
 
             # Special handling for lists: print each element on a new line.
-            if isinstance(result, str):
-                return result
-            elif isinstance(result, list):
+            if isinstance(result, list):
                 return '\n'.join(str(v) for v in result)
             else:
                 return str(result)
@@ -102,7 +101,7 @@ class Evaluator:
             if match is None:
                 raise ValueError("Invalid syntax for export tag.")
 
-            name = match.group('name')
+            name = match['name']
 
             self.namespaces[name] = namespace
             return ''
@@ -119,8 +118,8 @@ class Evaluator:
                 if match is None:
                     raise ValueError("Invalid syntax for import tag.")
 
-                name = match.group('name')
-                alias = match.group('alias') or name
+                name = match['name']
+                alias = match['alias'] or name
 
                 try:
                     # Import requested namespace into current namespace.
@@ -141,56 +140,42 @@ class Evaluator:
             # above.
             raise ValueError(f"Unknown tag type '{tag_type}'.")
 
-    @staticmethod
-    def _trim_newlines(newlines, trim):
-        """Given a string of newlines, and another string whose length
-        indicates the number of newlines to trim, return a string with
-        the resulting number of newlines.
-        """
-        return newlines[len(trim):]
-
-    def _eval_tag_outer(self, match_outer, namespace):
-        """Wrapper for ``_eval_tag_text`` which handles newline
-        trimming and indenting.
+    def _eval_tag(self, outer_match, namespace):
+        """Given a match of tag_outer_regex, return the evaluated text
+        as a tuple (whitespace_before, evaluated_tag_output,
+        whitespace_after). Raises ValueError if the tag does not match
+        tag_inner_regex.
         """
 
-        groups_outer = match_outer.groupdict(default='')
+        outer_groups = outer_match.groupdict(default='')
 
         # Match groups within the tag delimiters.
-        match_inner = re.fullmatch(__class__.tag_inner_regex,
-                groups_outer['tag_inner'], flags=re.DOTALL)
-        if not match_inner:
-            msg = "Invalid tag syntax in tag:\n"
-            msg += match_outer.group(0)
-            raise ValueError(msg)
-        groups_inner = match_inner.groupdict(default='')
+        inner_match = re.fullmatch(__class__.tag_inner_regex,
+                outer_groups['tag_inner'], flags=re.DOTALL)
+        if not inner_match:
+            raise ValueError("Invalid syntax within tag.")
+        inner_groups = inner_match.groupdict(default='')
 
         # Get tag output.
-        tag_type = groups_inner['tag_type']
-        tag_text = groups_inner['tag_text']
         try:
-            evaluated = self._eval_tag_text(tag_type, tag_text, namespace)
-        except Exception as e:
-            msg = "Error occurred while evaluating tag:\n"
-            msg += match_outer.group(0)
-            raise ValueError(msg) from e
+            evaluated = self._eval_tag_text(inner_groups['tag_type'],
+                    inner_groups['tag_text'], namespace)
+        except:
+            raise
 
         # Indent each line of output, unless indenting is turned off.
-        tag_indent = groups_outer['tag_indent']
-        if not groups_inner['no_indent']:
+        if not inner_groups['no_indent']:
             # Only indent non-empty lines.
-            evaluated = '\n'.join((tag_indent + s if s else "")
+            evaluated = '\n'.join((outer_groups['tag_indent'] + s if s else "")
                     for s in evaluated.split('\n'))
 
-        # Trim up to the number of newlines specified by the hyphens.
-        newlines_before = __class__._trim_newlines(
-                groups_outer['newlines_before'],
-                groups_inner['trim_before'])
-        newlines_after = __class__._trim_newlines(
-                groups_outer['newlines_after'],
-                groups_inner['trim_after'])
+        # Trim newlines before and after the tag.
+        newlines_before = outer_groups['newlines_before']
+        newlines_after  = outer_groups['newlines_after' ]
+        newlines_before = newlines_before[len(inner_groups['trim_before']):]
+        newlines_after  = newlines_after [len(inner_groups['trim_after' ]):]
 
-        return newlines_before + evaluated + newlines_after
+        return newlines_before, evaluated, newlines_after
 
     def eval_tags(self, text):
         """Evaluate all tags in the given string and return the
@@ -198,16 +183,31 @@ class Evaluator:
         namespace.
         """
 
-        # Global namespace used for eval() and exec() calls.
-        namespace = dict()
+        # Create a new namespace.
+        namespace = {}
 
-        def repl_func(match):
-            return self._eval_tag_outer(match, namespace)
+        remaining = text
+        chunks = []
+        while True:
+            # Find the next tag.
+            match = re.search(__class__.tag_outer_regex, remaining, re.DOTALL)
+            if not match:
+                # No more tags.
+                chunks.append(remaining)
+                break
 
-        # Match newlines in tag contents to allow multi-line tags.
-        flags = re.DOTALL
+            # Text before matched tag.
+            chunks.append(remaining[:match.start()])
 
-        return re.sub(__class__.tag_outer_regex, repl_func, text, flags=flags)
+            ws_before, evaluated, ws_after = self._eval_tag(match, namespace)
+            chunks.append(ws_before)
+            chunks.append(evaluated)
+
+            # Include whitespace after tag in the remaining string, so that it
+            # is available to be manipulated by the next tag.
+            remaining = ws_after + remaining[match.end():]
+
+        return ''.join(chunks)
 
 
 help__ = f"""Usage:
