@@ -26,8 +26,8 @@ class Evaluator:
     """Evaluates tags in text and manages exported namespaces."""
 
     tag_outer_regex = ''.join([
-        r'((?P<newlines_before>\n+)', # Newlines before.
-        r'(?P<tag_indent>\s*))?',     # Whitespace used to indent this tag.
+        r'(?P<newlines_before>\n*)?', # Newlines before.
+        r'^(?P<tag_indent>[ \t]*)?',  # Whitespace used to indent this tag.
         r'\{\{',                      # Opening tag delimiter.
         r'(?P<tag_inner>.*?)',        # Text enclosed in tag delimiters.
         r'\}\}',                      # Closing tag delimiter.
@@ -190,7 +190,8 @@ class Evaluator:
         chunks = []
         while True:
             # Find the next tag.
-            match = re.search(__class__.tag_outer_regex, remaining, re.DOTALL)
+            match = re.search(__class__.tag_outer_regex, remaining,
+                    re.DOTALL | re.MULTILINE)
             if not match:
                 # No more tags.
                 chunks.append(remaining)
