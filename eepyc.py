@@ -65,9 +65,9 @@ class Evaluator:
     def _eval_tag_text(self, tag_type, tag_text, namespace):
         """Evaluate a tag's contents in the given namespace."""
 
-        if tag_type == '': # TODO dedent expression tags too
+        if tag_type == '':
             # Evaluate expression.
-            result = eval(tag_text, namespace)
+            result = eval(textwrap.dedent(tag_text), namespace)
 
             # Special handling for lists: print each element on a new line.
             if isinstance(result, list):
