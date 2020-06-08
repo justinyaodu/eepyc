@@ -1,0 +1,12 @@
+{{%
+    planets = ["Mercury", "Venus", "Earth", "Mars",
+            "Jupiter", "Saturn", "Uranus", "Neptune"]
+    descriptions = ["hot", "even hotter", "just right", "cold",
+            "huge", "ringed", "turquoise", "far away"]
+--}}
+
+<h1>Planets of the Solar System</h1>
+<ol>
+  {{# Create a list item for each planet and its description. -}}
+  {{ [f"<li>{p} is {d}.</li>" for p, d in zip(planets, descriptions)] }}
+</ol>

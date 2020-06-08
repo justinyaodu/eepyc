@@ -138,6 +138,43 @@ I got #7f7f00.
 $
 ```
 
+### List Expressions and Automatic Indenting
+
+[example/planets.eepyc](https://github.com/justinyaodu/eepyc/tree/master/example/planets.eepyc)
+
+```
+{{%
+    planets = ["Mercury", "Venus", "Earth", "Mars",
+            "Jupiter", "Saturn", "Uranus", "Neptune"]
+    descriptions = ["hot", "even hotter", "just right", "cold",
+            "huge", "ringed", "turquoise", "far away"]
+--}}
+
+<h1>Planets of the Solar System</h1>
+<ol>
+  {{# Create a list item for each planet and its description. -}}
+  {{ [f"<li>{p} is {d}.</li>" for p, d in zip(planets, descriptions)] }}
+</ol>
+```
+
+Result:
+
+```console
+$ eepyc example/planets.eepyc
+<h1>Planets of the Solar System</h1>
+<ol>
+  <li>Mercury is hot.</li>
+  <li>Venus is even hotter.</li>
+  <li>Earth is just right.</li>
+  <li>Mars is cold.</li>
+  <li>Jupiter is huge.</li>
+  <li>Saturn is ringed.</li>
+  <li>Uranus is turquoise.</li>
+  <li>Neptune is far away.</li>
+</ol>
+$
+```
+
 ### Meta-Example
 
 This readme file was generated with `eepyc`, by making it evaluate its own source code before running itself on the files in the [example](https://github.com/justinyaodu/eepyc/tree/master/example) folder. ([Dogfooding](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) is important.) The readme source is located [here](https://github.com/justinyaodu/eepyc/tree/master/example/README.md.eepyc).

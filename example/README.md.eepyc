@@ -128,6 +128,31 @@ $ eepyc {{ color_path }} {{ color_test_path }}
 $
 ```
 
+### List Expressions and Automatic Indenting
+
+{{%
+    planets_path = 'example/planets.eepyc'
+    planets_src = read_path(planets_path)
+    print_path(planets_path)
+}}
+
+```
+{{%
+    print(planets_src)
+}}
+```
+
+Result:
+
+```console
+$ eepyc {{ planets_path }}
+{{%
+    e = eepyc.Evaluator()
+    print(e.eval_tags(planets_src))
+}}
+$
+```
+
 ### Meta-Example
 
 This readme file was generated with `eepyc`, by making it evaluate its own source code before running itself on the files in the [example]({{ repo_url('example') }}) folder. ([Dogfooding](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) is important.) The readme source is located [here]({{ repo_url('example/README.md.eepyc') }}).
