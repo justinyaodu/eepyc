@@ -39,3 +39,7 @@ class TestEepyc(unittest.TestCase):
     def test_no_indent(self):
         e = Evaluator()
         self.assertEqual(e.eval_tags("\n\t{{-^ 6 }}"), "6")
+
+    def test_tag_with_preceding_text(self):
+        e = Evaluator()
+        self.assertEqual(e.eval_tags("# {{ 4 }}"), "# 4")
