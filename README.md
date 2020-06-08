@@ -235,5 +235,3 @@ Tags must not contain the substring `}}` directly; workarounds include string co
 ### Newline Trimming
 
 The hyphens before/after a tag enable the trimming of consecutive newline characters before/after the tag. The number of hyphens specifies the number of newline characters to be removed. For example, the tag `{{# comment --}}` will remove up to two newline characters after it. This is useful for keeping the source file formatted neatly while also avoiding extraneous whitespace in the output file.
-
-Newline characters between adjacent tags "belong" to the preceding tag and cannot be trimmed by the following tag, due to the limitations of the regex-based parser. However, this is a minor issue in practice, since the newlines can still be trimmed by the preceding tag.
