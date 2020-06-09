@@ -15,7 +15,7 @@ $
 * **Multi-line tags** improve readability and flexibility
 * **Simple import system** for handling multiple files
 * **Reuse existing Python code** with minimal modifications
-* **Whitespace control** for pretty source files and pretty output
+* **Line trimming and smart indentation** for pretty source files and pretty output
 
 ## Installation
 
@@ -227,10 +227,14 @@ eepyc's Python interface instead.
 <comment>       ::= <tagopen> "#" <tagstart> <comment>    <tagend> <tagclose>
 ```
 
-### Additional Restrictions
-
-Tags must not contain the substring `}}` directly; workarounds include string concatenation and substring replacement. The text outside of tags must not contain `{{` or `}}`; a simple workaround is to use an expression tag like `{{ '{' * 2 }}`.
-
 ### Newline Trimming
 
 The hyphens before/after a tag enable the trimming of consecutive newline characters before/after the tag. The number of hyphens specifies the number of newline characters to be removed. For example, the tag `{{# comment --}}` will remove up to two newline characters after it. This is useful for keeping the source file formatted neatly while also avoiding extraneous whitespace in the output file.
+
+### Automatic Indenting
+
+If a tag is indented (only whitespace between the start of the line and `{{`), each line of text output by the tag will be indented correspondingly. (Blank lines will not be indented, however.) To disable automatic indenting, place a `^` after any `-` at the start of the tag: `\n  {{-^ "don't indent me" }}` will evaluate to `"don't indent me"`.
+
+### Escaping Literal Double Braces
+
+Tags must not contain the substring `}}` directly; workarounds include string concatenation and substring replacement. The text outside of tags must not contain `{{` or `}}`; a simple workaround is to use an expression tag like `{{ '{' * 2 }}`.
