@@ -39,7 +39,7 @@ class Evaluator:
         r'(?P<trim_before>-*)',   # Hyphens to trim newlines before.
         r'(?P<no_indent>[\^]?)',  # Caret to disable indenting of tag output.
         r'\s',                    # Mandatory whitespace character.
-        r'(?P<tag_text>.*?)',     # Tag contents.
+        r'(?P<tag_contents>.*?)', # The text within the tag.
         r'\s',                    # Mandatory whitespace character.
         r'(?P<trim_after>-*)',    # Hyphens to trim newlines after.
     ])
@@ -62,12 +62,12 @@ class Evaluator:
         # imported later.
         self.namespaces = dict()
 
-    def _eval_tag_text(self, tag_type, tag_text, namespace):
+    def _eval_tag_contents(self, tag_type, tag_contents, namespace):
         """Evaluate a tag's contents in the given namespace."""
 
         if tag_type == '':
             # Evaluate expression.
-            result = eval(textwrap.dedent(tag_text), namespace)
+            result = eval(textwrap.dedent(tag_contents), namespace)
 
             # Special handling for lists: print each element on a new line.
             if isinstance(result, list):
@@ -84,7 +84,7 @@ class Evaluator:
             sys.stdout = fake_stdout
 
             # Dedent code before executing, to properly handle indented code.
-            exec(textwrap.dedent(tag_text), namespace)
+            exec(textwrap.dedent(tag_contents), namespace)
 
             # Restore the actual stdout.
             sys.stdout = actual_stdout
@@ -97,7 +97,7 @@ class Evaluator:
         elif tag_type == 'e':
             # Export namespace.
 
-            match = re.fullmatch(__class__.export_regex, tag_text)
+            match = re.fullmatch(__class__.export_regex, tag_contents)
             if match is None:
                 raise ValueError("Invalid syntax for export tag.")
 
@@ -109,7 +109,7 @@ class Evaluator:
         elif tag_type == 'i':
             # Import namespaces.
 
-            for import_expr in tag_text.split(','):
+            for import_expr in tag_contents.split(','):
                 # Ignore empty and whitespace-only strings.
                 if re.fullmatch(r'\s*', import_expr):
                     continue
@@ -158,8 +158,8 @@ class Evaluator:
 
         # Get tag output.
         try:
-            evaluated = self._eval_tag_text(inner_groups['tag_type'],
-                    inner_groups['tag_text'], namespace)
+            evaluated = self._eval_tag_contents(inner_groups['tag_type'],
+                    inner_groups['tag_contents'], namespace)
         except:
             raise
 
@@ -177,7 +177,7 @@ class Evaluator:
 
         return newlines_before, evaluated, newlines_after
 
-    def eval_tags(self, text):
+    def evaluate(self, text):
         """Evaluate all tags in the given string and return the
         resulting string. Each call to this function creates a new
         namespace.
@@ -255,8 +255,8 @@ def _main():
     # the last file. This assumes that the preceding files are for
     # imports only, which should cover most use cases.
     for f in files[:-1]:
-        evaluator.eval_tags(f.read())
-    print(evaluator.eval_tags(files[-1].read()), end='')
+        evaluator.evaluate(f.read())
+    print(evaluator.evaluate(files[-1].read()), end='')
 
 
 if __name__ == '__main__':

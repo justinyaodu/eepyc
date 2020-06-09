@@ -38,7 +38,7 @@ inputs and put the output into this file. How excitingly meta. -}}
 $ echo '{{ expression_example }}' | eepyc
 {{%
     e = eepyc.Evaluator()
-    print(e.eval_tags(expression_example))
+    print(e.evaluate(expression_example))
 }}
 $
 ```
@@ -88,7 +88,7 @@ Result:
 $ eepyc {{ mult_table_path }}
 {{%
     e = eepyc.Evaluator()
-    print(e.eval_tags(mult_table_src))
+    print(e.evaluate(mult_table_src))
 }}
 $
 ```
@@ -120,8 +120,8 @@ Result:
 $ eepyc {{ color_path }} {{ color_test_path }}
 {{%
     e = eepyc.Evaluator()
-    e.eval_tags(color_src)
-    print(e.eval_tags(color_test_src))
+    e.evaluate(color_src)
+    print(e.evaluate(color_test_src))
 }}
 $
 ```
@@ -146,7 +146,7 @@ Result:
 $ eepyc {{ planets_path }}
 {{%
     e = eepyc.Evaluator()
-    print(e.eval_tags(planets_src))
+    print(e.evaluate(planets_src))
 }}
 $
 ```
