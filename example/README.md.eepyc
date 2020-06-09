@@ -15,11 +15,10 @@ inputs and put the output into this file. How excitingly meta. -}}
     
     repo_url_prefix = "https://github.com/justinyaodu/eepyc/tree/master/"
     
-    def repo_url(path):
-        return repo_url_prefix + path
-    
-    def print_path(path):
-        print(f"[{path}]({repo_url(path)})")
+    def repo_link(path, text=None):
+        if text is None:
+            text = path
+        return f"[{text}]({repo_url_prefix + path})"
 --}}
 
 # eepyc
@@ -61,7 +60,7 @@ Install from [PyPI](https://pypi.org/project/eepyc):
 $ pip install eepyc
 ```
 
-Alternatively, [download]({{ repo_url('eepyc.py') }}) the script and run it directly:
+Alternatively, {{ repo_link('eepyc.py', "download") }} the script and run it directly:
 
 ```console
 $ python eepyc.py
@@ -74,7 +73,7 @@ $ python eepyc.py
 {{%
     mult_table_path = 'example/mult-table.eepyc'
     mult_table_src = read_path(mult_table_path)
-    print_path(mult_table_path)
+    print(repo_link(mult_table_path))
 }}
 
 ```
@@ -99,7 +98,7 @@ $
 {{%
     color_path = 'example/color.py'
     color_src = read_path(color_path)
-    print_path(color_path)
+    print(repo_link(color_path))
 }}
 
 ```python
@@ -108,8 +107,7 @@ $
 {{%
     color_test_path = 'example/color-test.eepyc'
     color_test_src = read_path(color_test_path)
-    print_path(color_test_path)
-    print(" (file extension is not important)")
+    print(f"{repo_link(color_test_path)} (file extension is not important)")
 }}
 
 ```
@@ -133,7 +131,7 @@ $
 {{%
     planets_path = 'example/planets.eepyc'
     planets_src = read_path(planets_path)
-    print_path(planets_path)
+    print(repo_link(planets_path))
 }}
 
 ```
@@ -155,7 +153,7 @@ $
 
 ### Meta-Example
 
-This readme file was generated with `eepyc`, by making it evaluate its own source code before running itself on the files in the [example]({{ repo_url('example') }}) folder. ([Dogfooding](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) is important.) The readme source is located [here]({{ repo_url('example/README.md.eepyc') }}).
+This readme file was generated with `eepyc`, by making it evaluate its own source code before running itself on the files in the {{ repo_link('example') }} folder. ([Dogfooding](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) is important.) The readme source is located {{ repo_link('example/README.md.eepyc', "here") }}.
 
 ## Command-Line Usage
 

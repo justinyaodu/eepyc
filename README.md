@@ -102,8 +102,7 @@ def average(a, b):
 # End of statement tag.
 # }}
 ```
-[example/color-test.eepyc](https://github.com/justinyaodu/eepyc/tree/master/example/color-test.eepyc)
- (file extension is not important)
+[example/color-test.eepyc](https://github.com/justinyaodu/eepyc/tree/master/example/color-test.eepyc) (file extension is not important)
 
 ```
 {{# This is a comment tag. The hyphens at the end of this tag delete the
